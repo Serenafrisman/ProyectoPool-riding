@@ -1,0 +1,38 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POOL RIDING</title>
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="icon" href="./img/LOGO BUSCANDORT.png" type=icon>
+</head>
+<body>
+<div class="box1">
+    <h1>POOL RIDING</h1>
+    <h2>Entra a tu cuenta</h2>
+    </div>
+    <div class="box2">
+        
+        <form id="loginForm">
+            <div>
+                <label for="user"><h2>INGRESA A TU CUENTA</h2></label>
+                <input type="text" id="user" placeholder="USUARIO" required>
+            </div>
+            <div>
+                <label for="password"></label>
+                <input type="password" id="password" placeholder="CONTRASEÑA" required>
+            </div>
+            <button onclick="login()" id="ingresar"><h3>INGRESAR</h3></button>
+        </form>
+    </div>
+    <div class="box3">
+    <img src="img/LOGO BUSCANDORT.png" alt="Descripción de la imagen" class="img">
+</div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.js"></script>
+    <script src="./js/socket.js"></script>
+    <script src="./js/login.js"></script>
+</body>
+</html>
