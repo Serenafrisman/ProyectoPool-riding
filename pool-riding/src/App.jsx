@@ -1,58 +1,105 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { supabase } from './supabaseClient';
 
-// 1. Abrís la función principal del componente
-function App() {
-  
-  // 2. Definís los estados (variables de la pantalla)
+export default function App() {
+  const [esRegistro, setEsRegistro] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
   const [mensaje, setMensaje] = useState('');
 
-  // 3. Creás la función que se ejecuta al hacer clic en "Ingresar"
-  const handleLogin = async (e) => {
+  // 1. Iniciar Sesión
+  const ingresar = async (e) => {
     e.preventDefault();
+    setMensaje('');
 
-    // AQUÍ SÍ VA EL IF: Está adentro de 'handleLogin'
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    
+    if (error) setMensaje('Error: ' + error.message);
+    else setMensaje('¡Ingreso correcto!');
+  };
+
+  // 2. Registrarse
+  const registrar = async (e) => {
+    e.preventDefault();
+    setMensaje('');
+
+    // Validar mail de ORT
     if (!email.endsWith('@est.ort.edu.ar')) {
-      setMensaje('Error: Debes usar tu correo institucional (@est.ort.edu.ar)');
-      return; // <-- AHORA SÍ ES VÁLIDO: significa "cortá la función handleLogin y no llames a Supabase"
+      setMensaje('Error: Usá tu mail @est.ort.edu.ar');
+      return;
     }
 
-    // Si pasó la validación del mail, llama a Supabase:
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    // Crear usuario en Auth
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) return setMensaje('Error: ' + error.message);
 
-    if (error) {
-      setMensaje('Error: ' + error.message);
-    } else {
-      setMensaje('¡Ingreso correcto!');
+    // Crear perfil en la tabla
+    const { error: errorTabla } = await supabase
+      .from('perfiles')
+      .insert([{ id: data.user.id, nombre, apellido }]);
+
+    if (errorTabla) setMensaje('Error en perfil: ' + errorTabla.message);
+    else {
+      setMensaje('¡Cuenta creada! Ya podés ingresar.');
+      setEsRegistro(false);
     }
   };
 
-  // 4. Devolvés lo que se dibuja en la pantalla (HTML/JSX)
   return (
-    <div>
-      <h2>Pool-Riding 🚗</h2>
-      <form onSubmit={handleLogin}>
+    <div style={{ textAlign: 'center', padding: '20px' }}>
+      <h1>Pool-Riding </h1>
+
+      {/* Botones para cambiar entre Login y Registro */}
+      <button onClick={() => setEsRegistro(false)}>Iniciar Sesión</button>
+      <button onClick={() => setEsRegistro(true)}>Registrarse</button>
+
+      <h3>{esRegistro ? 'Crear Cuenta' : 'Ingresar'}</h3>
+
+      <form onSubmit={esRegistro ? registrar : ingresar}>
+        {/* Si está en modo registro, muestra Nombre y Apellido */}
+        {esRegistro && (
+          <>
+            <input 
+              placeholder="Nombre" 
+              value={nombre} 
+              onChange={(e) => setNombre(e.target.value)} 
+              required 
+            />
+            <br /><br />
+            <input 
+              placeholder="Apellido" 
+              value={apellido} 
+              onChange={(e) => setApellido(e.target.value)} 
+              required 
+            />
+            <br /><br />
+          </>
+        )}
+
         <input 
           type="email" 
+          placeholder="Correo (@est.ort.edu.ar)" 
           value={email} 
           onChange={(e) => setEmail(e.target.value)} 
+          required 
         />
+        <br /><br />
+
         <input 
           type="password" 
+          placeholder="Contraseña" 
           value={password} 
           onChange={(e) => setPassword(e.target.value)} 
+          required 
         />
-        <button type="submit">Ingresar</button>
+        <br /><br />
+
+        <button type="submit">{esRegistro ? 'Registrarme' : 'Entrar'}</button>
       </form>
+
       {mensaje && <p>{mensaje}</p>}
     </div>
   );
 }
-       const { data, error } = await supabase.auth.signInWithPassword({
-       email: email,
-       password: password,
-});
-// 5. Exportás el componente para que Vite lo use
-export default App;
