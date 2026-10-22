@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 
 export default function App() {
+  const [session, setSession] = useState(null);
   const [esRegistro, setEsRegistro] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,13 +14,22 @@ export default function App() {
   const ingresar = async (e) => {
     e.preventDefault();
     setMensaje('');
-
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    
-    if (error) setMensaje('Error: ' + error.message);
-    else setMensaje('¡Ingreso correcto!');
+  
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  
+    if (error) {
+      setMensaje('Error: ' + error.message);
+    } else {
+      // Al guardar la sesión, React cambia automáticamente de pantalla
+      setSession(data.session);
+    }
+   
   };
-
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
+    return () => subscription.unsubscribe();
+  }, []);
   // 2. Registrarse
   const registrar = async (e) => {
     e.preventDefault();
@@ -46,6 +56,23 @@ export default function App() {
       setEsRegistro(false);
     }
   };
+// 2. Condición: Si hay sesión activa, mostramos la Home
+if (session) {
+  return (
+    <div style={{ textAlign: 'center', padding: '20px' }}>
+      <h1>¡Bienvenido a la Home de Pool-Riding! 🚗</h1>
+      <p>Iniciaste sesión como: <strong>{session.user.email}</strong></p>
+      <button onClick={() => supabase.auth.signOut()}>Cerrar Sesión</button>
+    </div>
+  );
+}
+
+// 3. Si NO hay sesión, React sigue de largo y ejecuta el formulario de abajo
+return (
+  <div style={{ textAlign: 'center', padding: '20px' }}>
+    {/* Acá va tu formulario actual */}
+  </div>
+);
 
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
