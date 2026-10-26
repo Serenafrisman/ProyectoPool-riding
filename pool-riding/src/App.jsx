@@ -38,7 +38,7 @@ export default function App() {
     // Validar mail de ORT
     if (!email.endsWith('@est.ort.edu.ar')) {
       setMensaje('Error: Usá tu mail @est.ort.edu.ar');
-      return;
+      
     }
 
     // Crear usuario en Auth
@@ -58,22 +58,16 @@ export default function App() {
   };
 // 2. Condición: Si hay sesión activa, mostramos la Home
 if (session) {
-  return (
+   (
     <div style={{ textAlign: 'center', padding: '20px' }}>
       <h1>¡Bienvenido a la Home de Pool-Riding! 🚗</h1>
       <p>Iniciaste sesión como: <strong>{session.user.email}</strong></p>
-      <button onClick={() => supabase.auth.signOut()}>Cerrar Sesión</button>
+      <button onClick={async () => { await supabase.auth.signOut(); setSession(null); setEsRegistro(false);}}>Cerrar Sesión</button>
     </div>
   );
 }
 
 // 3. Si NO hay sesión, React sigue de largo y ejecuta el formulario de abajo
-return (
-  <div style={{ textAlign: 'center', padding: '20px' }}>
-    {/* Acá va tu formulario actual */}
-  </div>
-);
-
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
       <h1>Pool-Riding </h1>
@@ -129,4 +123,10 @@ return (
       {mensaje && <p>{mensaje}</p>}
     </div>
   );
+  return (
+    <div>
+      {/* Formulario de Login o Registro */}
+    </div>
+  );
+  
 }
