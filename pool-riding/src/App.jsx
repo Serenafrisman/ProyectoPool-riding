@@ -16,6 +16,7 @@ export default function App() {
     setMensaje('');
 
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
     if (error) {
       setMensaje('Error: ' + error.message);
     } else {
