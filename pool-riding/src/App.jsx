@@ -14,38 +14,34 @@ export default function App() {
   const ingresar = async (e) => {
     e.preventDefault();
     setMensaje('');
-  
+
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  
     if (error) {
       setMensaje('Error: ' + error.message);
     } else {
-      // Al guardar la sesión, React cambia automáticamente de pantalla
       setSession(data.session);
     }
-   
   };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
     return () => subscription.unsubscribe();
   }, []);
+
   // 2. Registrarse
   const registrar = async (e) => {
     e.preventDefault();
     setMensaje('');
 
-    // Validar mail de ORT
     if (!email.endsWith('@est.ort.edu.ar')) {
       setMensaje('Error: Usá tu mail @est.ort.edu.ar');
-      
+      return;
     }
 
-    // Crear usuario en Auth
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) return setMensaje('Error: ' + error.message);
 
-    // Crear perfil en la tabla
     const { error: errorTabla } = await supabase
       .from('perfiles')
       .insert([{ id: data.user.id, nombre, apellido }]);
@@ -56,30 +52,40 @@ export default function App() {
       setEsRegistro(false);
     }
   };
-// 2. Condición: Si hay sesión activa, mostramos la Home
-if (session) {
-   (
-    <div style={{ textAlign: 'center', padding: '20px' }}>
-      <h1>¡Bienvenido a la Home de Pool-Riding! 🚗</h1>
-      <p>Iniciaste sesión como: <strong>{session.user.email}</strong></p>
-      <button onClick={async () => { await supabase.auth.signOut(); setSession(null); setEsRegistro(false);}}>Cerrar Sesión</button>
-    </div>
-  );
-}
 
-// 3. Si NO hay sesión, React sigue de largo y ejecuta el formulario de abajo
+  // 3. VISTA HOME (Si hay sesión activa)
+  if (session) {
+    return (
+      <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
+        <h1>¡Bienvenido a la Home de Pool-Riding! 🚗</h1>
+        <p>Iniciaste sesión como: <strong>{session.user.email}</strong></p>
+        <button 
+          onClick={async () => { 
+            await supabase.auth.signOut(); 
+            setSession(null); 
+            setEsRegistro(false);
+          }}
+          style={{ backgroundColor: '#dc3545', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Cerrar Sesión
+        </button>
+      </div>
+    );
+  }
+
+  // 4. VISTA LOGIN / REGISTRO (Si NO hay sesión)
   return (
-    <div style={{ textAlign: 'center', padding: '20px' }}>
-      <h1>Pool-Riding </h1>
+    <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Pool-Riding</h1>
 
-      {/* Botones para cambiar entre Login y Registro */}
-      <button onClick={() => setEsRegistro(false)}>Iniciar Sesión</button>
-      <button onClick={() => setEsRegistro(true)}>Registrarse</button>
+      <div style={{ marginBottom: '15px' }}>
+        <button onClick={() => setEsRegistro(false)}>Iniciar Sesión</button>
+        <button onClick={() => setEsRegistro(true)} style={{ marginLeft: '10px' }}>Registrarse</button>
+      </div>
 
       <h3>{esRegistro ? 'Crear Cuenta' : 'Ingresar'}</h3>
 
       <form onSubmit={esRegistro ? registrar : ingresar}>
-        {/* Si está en modo registro, muestra Nombre y Apellido */}
         {esRegistro && (
           <>
             <input 
@@ -120,13 +126,7 @@ if (session) {
         <button type="submit">{esRegistro ? 'Registrarme' : 'Entrar'}</button>
       </form>
 
-      {mensaje && <p>{mensaje}</p>}
+      {mensaje && <p style={{ color: 'red' }}>{mensaje}</p>}
     </div>
   );
-  return (
-    <div>
-      {/* Formulario de Login o Registro */}
-    </div>
-  );
-  
 }
