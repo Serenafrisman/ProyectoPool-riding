@@ -58,7 +58,7 @@ export default function App() {
   if (session) {
     return (
       <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
-        <h1>¡Bienvenido a la Home de Pool-Riding! 🚗</h1>
+        <h1>¡Bienvenido a la Home de Pool-Riding! </h1>
         <p>Iniciaste sesión como: <strong>{session.user.email}</strong></p>
         <button 
           onClick={async () => { 
