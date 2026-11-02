@@ -9,6 +9,9 @@ export default function App() {
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [mensaje, setMensaje] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [patente, setPatente] = useState('');
+  const [modeloAuto, setModeloAuto] = useState('');
 
   // 1. Iniciar Sesión
   const ingresar = async (e) => {
@@ -53,6 +56,20 @@ export default function App() {
       setEsRegistro(false);
     }
   };
+  const registrarConductor = async (e) => {
+    e.preventDefault();
+  
+    await supabase
+      .from('perfiles')
+      .update({ 
+        telefono: telefono, 
+        patente: patente, 
+        modelo_auto: modeloAuto 
+      })
+      .eq('id', session.user.id);
+  
+    alert('¡Datos guardados!');
+  };
 
   // 3. VISTA HOME (Si hay sesión activa)
   if (session) {
@@ -73,7 +90,48 @@ export default function App() {
       </div>
     );
   }
-
+  if (session) {
+    return (
+      <div>
+        <h2> Pizarrón de Viajes</h2>
+        <p>Usuario: {session.user.email}</p>
+  
+        {/* Formulario de Conductor */}
+        <form onSubmit={registrarConductor}>
+          <h3>Descripción del conductor</h3>
+  
+          <label>Teléfono:</label>
+          <input 
+            type="text" 
+            value={telefono} 
+            onChange={(e) => setTelefono(e.target.value)} 
+          />
+  
+          <br /><br />
+  
+          <label>Patente:</label>
+          <input 
+            type="text" 
+            value={patente} 
+            onChange={(e) => setPatente(e.target.value)} 
+          />
+  
+          <br /><br />
+  
+          <label>Modelo de auto:</label>
+          <input 
+            type="text" 
+            value={modeloAuto} 
+            onChange={(e) => setModeloAuto(e.target.value)} 
+          />
+  
+          <br /><br />
+  
+          <button type="submit">Guardar datos</button>
+        </form>
+      </div>
+    );
+  }
   // 4. VISTA LOGIN / REGISTRO (Si NO hay sesión)
   return (
     <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
