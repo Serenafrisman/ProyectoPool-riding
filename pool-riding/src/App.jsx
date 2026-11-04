@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 
 export default function App() {
+  // 1. ESTADOS
   const [session, setSession] = useState(null);
   const [esRegistro, setEsRegistro] = useState(false);
   const [email, setEmail] = useState('');
@@ -13,7 +14,16 @@ export default function App() {
   const [patente, setPatente] = useState('');
   const [modeloAuto, setModeloAuto] = useState('');
 
-  // 1. Iniciar Sesión
+  
+  // Estado para controlar la visibilidad del formulario de conductor
+  const [mostrarForm, setMostrarForm] = useState(false);
+  const [nombreCompleto, setNombreCompleto] = useState('');
+  const [emailPersonal, setEmailPersonal] = useState('');
+  const [parienteDe, setParienteDe] = useState('');
+  const [colorAuto, setColorAuto] = useState('');
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
+
+  // 2. INICIAR SESIÓN
   const ingresar = async (e) => {
     e.preventDefault();
     setMensaje('');
@@ -33,7 +43,7 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // 2. Registrarse
+  // 3. REGISTRARSE
   const registrar = async (e) => {
     e.preventDefault();
     setMensaje('');
@@ -56,6 +66,8 @@ export default function App() {
       setEsRegistro(false);
     }
   };
+
+  // 4. GUARDAR CONDUCTOR
   const registrarConductor = async (e) => {
     e.preventDefault();
   
@@ -69,19 +81,92 @@ export default function App() {
       .eq('id', session.user.id);
   
     alert('¡Datos guardados!');
+    setMostrarForm(false); // Cierra el formulario al terminar
   };
 
-  // 3. VISTA HOME (Si hay sesión activa)
+  // 5. VISTA HOME (SI HAY SESIÓN)
   if (session) {
     return (
       <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
-        <h1>¡Bienvenido a la Home de Pool-Riding! </h1>
+        <h1>¡Bienvenido a Pool-Riding! </h1>
         <p>Iniciaste sesión como: <strong>{session.user.email}</strong></p>
+
+        {!mostrarForm ? (
+          <button 
+            onClick={() => setMostrarForm(true)}
+            style={{ backgroundColor: '#007bff', color: '#fff', border: 'none', padding: '10px 15px', borderRadius: '4px', cursor: 'pointer', fontSize: '16px' }}
+          >
+             Conducir
+          </button>
+        ) : (
+          <div style={{ border: '1px solid #ccc', padding: '15px', margin: '15px auto', maxWidth: '300px', borderRadius: '8px' }}>
+            <form onSubmit={registrarConductor}>
+              <h3>Descripción del conductor</h3>
+              
+              <label>Nombre completo:</label>
+              <input 
+                type="text" 
+                value={telefono} 
+                onChange={(e) => setNombreCompleto(e.target.value)} 
+              />
+      
+              <br /><br />
+       
+              <label>Correo:</label>
+              <input 
+                type="text" 
+                value={telefono} 
+                onChange={(e) => setCorreo(e.target.value)} 
+              />
+      
+              <br /><br />
+      
+              <label>Teléfono:</label>
+              <input 
+                type="text" 
+                value={telefono} 
+                onChange={(e) => setTelefono(e.target.value)} 
+              />
+      
+              <br /><br />
+      
+              <label>Patente:</label>
+              <input 
+                type="text" 
+                value={patente} 
+                onChange={(e) => setPatente(e.target.value)} 
+              />
+      
+              <br /><br />
+      
+              <label>Modelo de auto:</label>
+              <input 
+                type="text" 
+                value={modeloAuto} 
+                onChange={(e) => setModeloAuto(e.target.value)} 
+              />
+      
+              <br /><br />
+      
+              <button type="submit">Empezar</button>
+              <button 
+                type="button" 
+                onClick={() => setMostrarForm(false)} 
+                style={{ marginLeft: '10px' }}
+              >
+                Cancelar
+              </button>
+            </form>
+          </div>
+        )}
+
+        <br /><br />
         <button 
           onClick={async () => { 
             await supabase.auth.signOut(); 
             setSession(null); 
             setEsRegistro(false);
+            setMostrarForm(false);
           }}
           style={{ backgroundColor: '#dc3545', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer' }}
         >
@@ -90,49 +175,8 @@ export default function App() {
       </div>
     );
   }
-  if (session) {
-    return (
-      <div>
-        <h2> Pizarrón de Viajes</h2>
-        <p>Usuario: {session.user.email}</p>
-  
-        {/* Formulario de Conductor */}
-        <form onSubmit={registrarConductor}>
-          <h3>Descripción del conductor</h3>
-  
-          <label>Teléfono:</label>
-          <input 
-            type="text" 
-            value={telefono} 
-            onChange={(e) => setTelefono(e.target.value)} 
-          />
-  
-          <br /><br />
-  
-          <label>Patente:</label>
-          <input 
-            type="text" 
-            value={patente} 
-            onChange={(e) => setPatente(e.target.value)} 
-          />
-  
-          <br /><br />
-  
-          <label>Modelo de auto:</label>
-          <input 
-            type="text" 
-            value={modeloAuto} 
-            onChange={(e) => setModeloAuto(e.target.value)} 
-          />
-  
-          <br /><br />
-  
-          <button type="submit">Guardar datos</button>
-        </form>
-      </div>
-    );
-  }
-  // 4. VISTA LOGIN / REGISTRO (Si NO hay sesión)
+
+  // 6. VISTA LOGIN / REGISTRO (SI NO HAY SESIÓN)
   return (
     <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
       <h1>Pool-Riding</h1>
