@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 
 export default function App() {
-  // 1. ESTADOS
+  //  
   const [session, setSession] = useState(null);
   const [esRegistro, setEsRegistro] = useState(false);
   const [email, setEmail] = useState('');
@@ -17,13 +17,14 @@ export default function App() {
   
   // Estado para controlar la visibilidad del formulario de conductor
   const [mostrarForm, setMostrarForm] = useState(false);
-  const [nombreCompleto, setNombreCompleto] = useState('');
+  const [nombreCompleto, setnombreCompleto] = useState('');
+  const [Correo, setCorreo] = useState('');
   const [emailPersonal, setEmailPersonal] = useState('');
   const [parienteDe, setParienteDe] = useState('');
   const [colorAuto, setColorAuto] = useState('');
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
 
-  // 2. INICIAR SESIÓN
+  //  INICIAR SESIÓN
   const ingresar = async (e) => {
     e.preventDefault();
     setMensaje('');
@@ -43,7 +44,7 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // 3. REGISTRARSE
+  // REGISTRARSE
   const registrar = async (e) => {
     e.preventDefault();
     setMensaje('');
@@ -71,12 +72,13 @@ export default function App() {
   const registrarConductor = async (e) => {
     e.preventDefault();
   
-    await supabase
+    const { error } = await supabase
       .from('perfiles')
       .update({ 
         telefono: telefono, 
         patente: patente, 
-        modelo_auto: modeloAuto 
+        modelo_auto: modeloAuto,
+        es_conductor: true
       })
       .eq('id', session.user.id);
   
@@ -106,8 +108,9 @@ export default function App() {
               <label>Nombre completo:</label>
               <input 
                 type="text" 
-                value={telefono} 
-                onChange={(e) => setNombreCompleto(e.target.value)} 
+                value={nombreCompleto} 
+                onChange={(e) => setnombreCompleto(e.target.value)} 
+                required
               />
       
               <br /><br />
@@ -115,8 +118,9 @@ export default function App() {
               <label>Correo:</label>
               <input 
                 type="text" 
-                value={telefono} 
+                value={Correo} 
                 onChange={(e) => setCorreo(e.target.value)} 
+                required
               />
       
               <br /><br />
@@ -126,6 +130,7 @@ export default function App() {
                 type="text" 
                 value={telefono} 
                 onChange={(e) => setTelefono(e.target.value)} 
+                required
               />
       
               <br /><br />
@@ -135,6 +140,7 @@ export default function App() {
                 type="text" 
                 value={patente} 
                 onChange={(e) => setPatente(e.target.value)} 
+                required
               />
       
               <br /><br />
@@ -144,6 +150,7 @@ export default function App() {
                 type="text" 
                 value={modeloAuto} 
                 onChange={(e) => setModeloAuto(e.target.value)} 
+                required
               />
       
               <br /><br />
