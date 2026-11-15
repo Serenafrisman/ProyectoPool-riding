@@ -13,14 +13,14 @@ export default function App() {
   const [telefono, setTelefono] = useState('');
   const [patente, setPatente] = useState('');
   const [modeloAuto, setModeloAuto] = useState('');
-  const [esConductor, setEsConductor] = useState(false);
   const [mostrarFormViaje, setMostrarFormViaje] = useState(false);
   const [destino, setDestino] = useState('');
   const [horario, setHorario] = useState('');
   const [asientos, setAsientos] = useState(3);
   const [viajes, setViajes] = useState([]);
 
-  
+  const [esConductor, setEsConductor] = useState(localStorage.getItem('soyConductor') === 'true');
+
   // Estado para controlar la visibilidad del formulario de conductor
   const [mostrarForm, setMostrarForm] = useState(false);
   const [nombreCompleto, setnombreCompleto] = useState('');
@@ -44,11 +44,35 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setSession(session));
-    return () => subscription.unsubscribe();
-  }, []);
+ useEffect(() => {
+  const iniciar = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    setSession(session);
+
+    if (session) {
+      const { data: perfil } = await supabase
+        .from('perfiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+
+      if (perfil && perfil.es_conductor) {
+        setEsConductor(true);
+        setPatente(perfil.patente || '');
+      }
+    }
+
+    cargarViajes();
+  };
+
+  iniciar();
+
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+  });
+
+  return () => subscription.unsubscribe();
+}, []);
 
   // REGISTRARSE
   const registrar = async (e) => {
@@ -82,6 +106,7 @@ export default function App() {
 
   const registrarConductor = async (e) => {
     e.preventDefault();
+        localStorage.setItem('soyConductor', 'true');
 
     const { error } = await supabase
       .from('perfiles')
@@ -91,17 +116,14 @@ export default function App() {
         modelo_auto: modeloAuto,
         es_conductor: true
       })
-      .eq('id', session.user.id);
 
-    if (error) {
-      alert('Error: ' + error.message);
-      return;
-    }
-
-    alert('¡Datos guardados!');
-    setMostrarForm(false);
+  if (!error) {
     setEsConductor(true);
-  };
+    setMostrarForm(false);
+  } else {
+    alert('Error al guardar conductor: ' + error.message);
+  }
+};
 
   // PUBLICAR VIAJE
   const publicarViaje = async (e) => {
@@ -145,6 +167,7 @@ export default function App() {
           </button>
         ) : (
           <div style={{ border: '1px solid #ccc', padding: '15px', margin: '15px auto', maxWidth: '300px', borderRadius: '8px' }}>
+            
             <form onSubmit={registrarConductor}>
               <h3>Descripción del conductor</h3>
               
