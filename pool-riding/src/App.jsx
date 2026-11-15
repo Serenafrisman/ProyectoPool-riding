@@ -18,6 +18,7 @@ export default function App() {
   const [horario, setHorario] = useState('');
   const [asientos, setAsientos] = useState(3);
   const [viajes, setViajes] = useState([]);
+  const [busqueda, setBusqueda] = useState('');
 
   const [esConductor, setEsConductor] = useState(localStorage.getItem('soyConductor') === 'true');
 
@@ -151,80 +152,95 @@ export default function App() {
     }
   };
 
+  const reservarViaje = async (viaje) => {
+    const { error } = await supabase
+      .from('viajes')
+      .update({ asientos_disponibles: viaje.asientos_disponibles - 1 })
+      .eq('id', viaje.id);
+
+    if (!error) {
+      alert('¡Te sumaste al viaje!');
+      cargarViajes();
+    }
+  };
   //  VISTA HOME (SI HAY SESIÓN)
   if (session) {
     return (
       <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
         <h1>¡Bienvenido a Pool-Riding! </h1>
-        <p>Iniciaste sesión como: <strong>{session.user.email}</strong></p>
-
-        {!mostrarForm ? (
-          <button 
-            onClick={() => setMostrarForm(true)}
-            style={{ backgroundColor: '#007bff', color: '#fff', border: 'none', padding: '10px 15px', borderRadius: '4px', cursor: 'pointer', fontSize: '16px' }}
-          >
-             Conducir
-          </button>
+        <div style={{ marginBottom: '12px' }}>
+        <input
+          placeholder="Buscar por destino u horario..."
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          style={{ padding: '8px', width: '260px' }}
+        />
+      </div>
+      {esConductor ? (
+          <button onClick={() => setMostrarFormViaje(true)}>Publicar Viaje</button>
         ) : (
+          <button onClick={() => setMostrarForm(true)}>Conducir</button>
+        )}
+        {mostrarForm && (
           <div style={{ border: '1px solid #ccc', padding: '15px', margin: '15px auto', maxWidth: '300px', borderRadius: '8px' }}>
-            
             <form onSubmit={registrarConductor}>
               <h3>Descripción del conductor</h3>
-              
+
               <label>Nombre completo:</label>
-              <input 
-                type="text" 
-                value={nombreCompleto} 
-                onChange={(e) => setnombreCompleto(e.target.value)} 
+              <input
+                type="text"
+                value={nombreCompleto}
+                onChange={(e) => setnombreCompleto(e.target.value)}
                 required
               />
-      
+              
+
               <br /><br />
-       
+
               <label>Correo:</label>
-              <input 
-                type="text" 
-                value={Correo} 
-                onChange={(e) => setCorreo(e.target.value)} 
+              <input
+                type="text"
+                value={Correo}
+                onChange={(e) => setCorreo(e.target.value)}
                 required
               />
-      
+
               <br /><br />
-      
+
               <label>Teléfono:</label>
-              <input 
-                type="text" 
-                value={telefono} 
-                onChange={(e) => setTelefono(e.target.value)} 
+              <input
+                type="text"
+                value={telefono}
+                onChange={(e) => setTelefono(e.target.value)}
                 required
               />
-      
+
               <br /><br />
-      
+
               <label>Patente:</label>
-              <input 
-                type="text" 
-                value={patente} 
-                onChange={(e) => setPatente(e.target.value)} 
+              <input
+                type="text"
+                value={patente}
+                onChange={(e) => setPatente(e.target.value)}
                 required
               />
-      
+
               <br /><br />
-      
+
               <label>Modelo de auto:</label>
-              <input 
-                type="text" 
-                value={modeloAuto} 
-                onChange={(e) => setModeloAuto(e.target.value)} 
+              <input
+                type="text"
+                value={modeloAuto}
+                onChange={(e) => setModeloAuto(e.target.value)}
                 required
               />
-      
+
               <br /><br />
-      
+
               <button type="submit">Empezar</button>
-              <button 
-                type="button" 
-                onClick={() => setMostrarForm(false)} 
+              <button
+                type="button"
+                onClick={() => setMostrarForm(false)}
                 style={{ marginLeft: '10px' }}
               >
                 Cancelar
@@ -237,12 +253,6 @@ export default function App() {
 
         <hr />
 
-        {esConductor && !mostrarFormViaje && (
-          <button onClick={() => setMostrarFormViaje(true)}>
-            Publicar Viaje
-          </button>
-        )}
-
         {esConductor && mostrarFormViaje && (
           <form onSubmit={publicarViaje}>
             <h3>Publicar Viaje (Desde ORT)</h3>
@@ -252,11 +262,23 @@ export default function App() {
             <br /><br />
             <input type="number" min="1" max="3" value={asientos} onChange={(e) => setAsientos(e.target.value)} required />
             <br /><br />
-            <button type="submit">Publicar</button>
+            <button type="submit">Subir</button>
             <button type="button" onClick={() => setMostrarFormViaje(false)}>Cancelar</button>
           </form>
         )}
-
+       <h3>Viajes disponibles</h3>
+      {viajes.filter((v) => v.destino.toLowerCase().includes(busqueda.toLowerCase()) || v.horario.includes(busqueda)).map((v) => (
+        <div key={v.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px auto', maxWidth: '300px' }}>
+          <p><strong>ORT → {v.destino}</strong> ({v.horario})</p>
+          <p>Conductor: {v.conductor_nombre} | Patente: {v.patente}</p>
+          <p>Asientos libres: {v.asientos_disponibles}</p>
+          {v.asientos_disponibles > 0 && (
+            <button onClick={() => reservarViaje(v)}>Sumarme al viaje</button>
+            
+          )}
+        </div>
+      ))}
+    
         <button 
           onClick={async () => { 
             await supabase.auth.signOut(); 
