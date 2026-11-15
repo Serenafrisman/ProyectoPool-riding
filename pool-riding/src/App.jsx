@@ -13,6 +13,12 @@ export default function App() {
   const [telefono, setTelefono] = useState('');
   const [patente, setPatente] = useState('');
   const [modeloAuto, setModeloAuto] = useState('');
+  const [esConductor, setEsConductor] = useState(false);
+  const [mostrarFormViaje, setMostrarFormViaje] = useState(false);
+  const [destino, setDestino] = useState('');
+  const [horario, setHorario] = useState('');
+  const [asientos, setAsientos] = useState(3);
+  const [viajes, setViajes] = useState([]);
 
   
   // Estado para controlar la visibilidad del formulario de conductor
@@ -68,25 +74,62 @@ export default function App() {
     }
   };
 
-  // 4. GUARDAR CONDUCTOR
+  // FORM CONDUCTOR
+  const cargarViajes = async () => {
+    const { data } = await supabase.from('viajes').select('*');
+    if (data) setViajes(data);
+  };
+
   const registrarConductor = async (e) => {
     e.preventDefault();
-  
+
     const { error } = await supabase
       .from('perfiles')
-      .update({ 
-        telefono: telefono, 
-        patente: patente, 
+      .update({
+        telefono: telefono,
+        patente: patente,
         modelo_auto: modeloAuto,
         es_conductor: true
       })
       .eq('id', session.user.id);
-  
+
+    if (error) {
+      alert('Error: ' + error.message);
+      return;
+    }
+
     alert('¡Datos guardados!');
-    setMostrarForm(false); // Cierra el formulario al terminar
+    setMostrarForm(false);
+    setEsConductor(true);
   };
 
-  // 5. VISTA HOME (SI HAY SESIÓN)
+  // PUBLICAR VIAJE
+  const publicarViaje = async (e) => {
+    e.preventDefault();
+
+    const { error } = await supabase
+      .from('viajes')
+      .insert([{
+        conductor_id: session.user.id,
+        conductor_nombre: session.user.email,
+        patente: patente,
+        destino: destino,
+        horario: horario,
+        asientos_disponibles: Number(asientos)
+      }]);
+
+    if (!error) {
+      alert('¡Viaje publicado!');
+      setDestino('');
+      setHorario('');
+      setMostrarFormViaje(false);
+      cargarViajes();
+    } else {
+      alert('Error: ' + error.message);
+    }
+  };
+
+  //  VISTA HOME (SI HAY SESIÓN)
   if (session) {
     return (
       <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
@@ -168,6 +211,29 @@ export default function App() {
         )}
 
         <br /><br />
+
+        <hr />
+
+        {esConductor && !mostrarFormViaje && (
+          <button onClick={() => setMostrarFormViaje(true)}>
+            Publicar Viaje
+          </button>
+        )}
+
+        {esConductor && mostrarFormViaje && (
+          <form onSubmit={publicarViaje}>
+            <h3>Publicar Viaje (Desde ORT)</h3>
+            <input placeholder="Destino" value={destino} onChange={(e) => setDestino(e.target.value)} required />
+            <br /><br />
+            <input placeholder="Horario" value={horario} onChange={(e) => setHorario(e.target.value)} required />
+            <br /><br />
+            <input type="number" min="1" max="3" value={asientos} onChange={(e) => setAsientos(e.target.value)} required />
+            <br /><br />
+            <button type="submit">Publicar</button>
+            <button type="button" onClick={() => setMostrarFormViaje(false)}>Cancelar</button>
+          </form>
+        )}
+
         <button 
           onClick={async () => { 
             await supabase.auth.signOut(); 
