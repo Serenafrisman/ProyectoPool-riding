@@ -21,15 +21,13 @@ export default function App() {
   const [busqueda, setBusqueda] = useState('');
   const [nombreUsuario, setNombreUsuario] = useState('');
   const [fecha, setFecha] = useState('');
-  
+  const [viajeSeleccionado, setViajeSeleccionado] = useState(null);
 
   const [esConductor, setEsConductor] = useState(localStorage.getItem('soyConductor') === 'true');
 
   // Estado para controlar la visibilidad del formulario de conductor
   const [mostrarForm, setMostrarForm] = useState(false);
   const [nombreCompleto, setnombreCompleto] = useState('');
-
-
 
   //  INICIAR SESIÓN
   const ingresar = async (e) => {
@@ -85,14 +83,18 @@ export default function App() {
       return;
     }
 
-  const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { nombre, apellido },
       },
     });
-    
+
+    if (error) {
+      setMensaje('Error: ' + error.message);
+      return;
+    }
 
     const { error: errorTabla } = await supabase
       .from('perfiles')
@@ -111,44 +113,50 @@ export default function App() {
       .from('viajes')
       .select('*');
 
-    const { data: listaDetalles, error: errorDetalles } = await supabase
+   const { data: listaDetalles, error: errorDetalles } = await supabase
       .from('Viaje_detalle')
       .select('*');
 
-    if (!errorViajes && !errorDetalles) {
-      const viajesCalculados = listaViajes.map((v) => {
-        const ocupados = listaDetalles.filter((d) => d.id_viaje === v.id).length;
-        const totales = v.asientos_totales || 4;
+    if (errorViajes) console.error('Error viajes:', errorViajes);
+    if (errorDetalles) console.error('Error detalles:', errorDetalles);
+   if (listaViajes) {
+    const detalles = listaDetalles || [];
+    const viajesCalculados = listaViajes.map((v) => {
+    const pasajeros = detalles.filter((d) => Number(d.id_viaje) === Number(v.id));
+    const totales = Number(v.asientos_totales) || 4;
         return {
           ...v,
           asientos_totales: totales,
-          asientos_disponibles: totales - ocupados,
+          asientos_disponibles: totales - pasajeros.length,
+          pasajeros: pasajeros,
         };
       });
       setViajes(viajesCalculados);
     }
   };
 
+
   const registrarConductor = async (e) => {
     e.preventDefault();
-        localStorage.setItem('soyConductor', 'true');
+    localStorage.setItem('soyConductor', 'true');
 
     const { error } = await supabase
       .from('perfiles')
       .update({
-        telefono: telefono,
-        patente: patente,
+        telefono,
+        patente,
         modelo_auto: modeloAuto,
-        es_conductor: true
+        es_conductor: true,
       })
+      .eq('id', session.user.id);
 
-  if (!error) {
-    setEsConductor(true);
-    setMostrarForm(false);
-  } else {
-    alert('Error al guardar conductor: ' + error.message);
-  }
-};
+    if (!error) {
+      setEsConductor(true);
+      setMostrarForm(false);
+    } else {
+      alert('Error al guardar conductor: ' + error.message);
+    }
+  };
 
   // PUBLICAR VIAJE
   const publicarViaje = async (e) => {
@@ -159,13 +167,12 @@ export default function App() {
       .insert([{
         conductor_id: session.user.id,
         conductor_nombre: session.user.email,
-        patente: patente,
-        destino: destino,
-        fecha: fecha,
-        horario: horario,
-        asientos_disponibles: Number(asientos)
+        patente,
+        destino,
+        fecha,
+        horario,
+        asientos_disponibles:Number(asientos),
       }]);
-
     if (!error) {
       alert('¡Viaje publicado!');
       setDestino('');
@@ -178,32 +185,25 @@ export default function App() {
   };
 
   const reservarViaje = async (viaje) => {
-    const { error } = await supabase
-      if (viaje.asientos_disponibles <= 0) return;
+    if (viaje.asientos_disponibles <= 0) return;
 
     const { error } = await supabase
       .from('Viaje_detalle')
       .insert([{ mail_usuario: session.user.email, id_viaje: viaje.id }]);
 
     if (!error) {
-      cargarViajes();
-    }
-      
-
-    if (!error) {
       alert('¡Te sumaste al viaje!');
-
-   
-    }
       cargarViajes();
+    } else {
+      alert('Error: ' + error.message);
     }
   };
+
   //  VISTA HOME (SI HAY SESIÓN)
   if (session) {
     return (
       <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
-       <h1>
-  ¡Bienvenido a Pool-Riding, {session.user.user_metadata?.nombre || session.user.email.split('@')[0]}!</h1>
+       <h1>¡Bienvenido a Pool-Riding, {session.user.user_metadata?.nombre || session.user.email.split('@')[0]}!</h1>
         <div style={{ marginBottom: '12px' }}>
         <input
           placeholder="Buscar por destino u horario..."
@@ -218,7 +218,9 @@ export default function App() {
           <button onClick={() => setMostrarForm(true)}>Conducir</button>
         )}
         {mostrarForm && (
-          <div style={{ border: '1px solid #ccc', padding: '15px', margin: '15px auto', maxWidth: '300px', borderRadius: '8px' }}>
+         <div className="modal-fondo" onClick={() => setMostrarForm(false)}>
+          <div className="modal-caja" onClick={(e) => e.stopPropagation()}></div>
+           <div style={{ border: '1px solid #ccc', padding: '15px', margin: '15px auto', maxWidth: '300px', borderRadius: '8px' }}>
             <form onSubmit={registrarConductor}>
               <h3>Descripción del conductor</h3>
 
@@ -230,7 +232,6 @@ export default function App() {
                 required
               />
               
-
               <br /><br />
 
               <label>Correo:</label>
@@ -283,6 +284,7 @@ export default function App() {
               </button>
             </form>
           </div>
+        </div>
         )}
 
         <br /><br />
@@ -290,32 +292,44 @@ export default function App() {
         <hr />
 
         {esConductor && mostrarFormViaje && (
-          <form onSubmit={publicarViaje}>
-            <h3>Publicar Viaje (Desde ORT)</h3>
-            <label>Destino</label>
-            <input placeholder="Destino" value={destino} onChange={(e) => setDestino(e.target.value)} required />
-            <br /><br />
-            <label>Fecha</label>
-              <input placeholder="Fecha"  type="date" value={fecha}  onChange={(e) => setFecha(e.target.value)} required />
-            <br /><br />
-            <label>Horario</label>
-            <input placeholder="Horario" type="time" value={horario} onChange={(e) => setHorario(e.target.value)} required />
-            <br /><br />
-            <label>Asientos disponibles</label>
-            <input type="number" min="1" max="3" value={asientos} onChange={(e) => setAsientos(e.target.value)} required />
-            <br /><br />
-            <button type="submit">Subir</button>
-            <button type="button" onClick={() => setMostrarFormViaje(false)}>Cancelar</button>
-          </form>
+          <div className="modal-fondo" onClick={() => setMostrarFormViaje(false)}>
+            <div className="modal-caja" onClick={(e) => e.stopPropagation()}>
+              <form onSubmit={publicarViaje}>
+                <h3>Publicar Viaje (Desde ORT)</h3>
+                <label>Destino</label>
+                <input placeholder="Destino" value={destino} onChange={(e) => setDestino(e.target.value)} required />
+                <br /><br />
+                <label>Fecha</label>
+                <input placeholder="Fecha" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} required />
+                <br /><br />
+                <label>Horario</label>
+                <input placeholder="Horario" type="time" value={horario} onChange={(e) => setHorario(e.target.value)} required />
+                <br /><br />
+                <label>Asientos disponibles</label>
+                <input type="number" min="1" max="3" value={asientos} onChange={(e) => setAsientos(e.target.value)} required />
+                <br /><br />
+                <button type="submit">Subir</button>
+                <button type="button" onClick={() => setMostrarFormViaje(false)}>Cancelar</button>
+              </form>
+            </div>
+          </div>
         )}
+
        <h3>Viajes disponibles</h3>
-      {viajes.filter((v) => v.destino.toLowerCase().includes(busqueda.toLowerCase()) || v.horario.includes(busqueda)).map((v) => (
+      {viajes
+        .filter(
+          (v) =>
+            (v.destino || '').toLowerCase().includes(busqueda.toLowerCase()) ||
+            (v.horario || '').includes(busqueda)
+        )
+        .map((v) => (
         <div key={v.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px auto', maxWidth: '300px' }}>
           <p><strong>ORT → {v.destino}</strong> ({v.horario})</p>
           <p>Conductor: {v.conductor_nombre} | Patente: {v.patente}</p>
           <p>Asientos libres: {v.asientos_disponibles}</p>
           {v.asientos_disponibles > 0 && (
             <button onClick={() => reservarViaje(v)}>Sumarme al viaje</button>
+            
             
           )}
         </div>
