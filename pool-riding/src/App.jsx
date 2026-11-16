@@ -203,95 +203,101 @@ export default function App() {
   if (session) {
     return (
       <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
-       <h1>¡Bienvenido a Pool-Riding, {session.user.user_metadata?.nombre || session.user.email.split('@')[0]}!</h1>
+        <h1>¡Bienvenido a Pool-Riding, {session.user.user_metadata?.nombre || session.user.email.split('@')[0]}!</h1>
+
         <div style={{ marginBottom: '12px' }}>
-        <input
-          placeholder="Buscar por destino u horario..."
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-          style={{ padding: '8px', width: '260px' }}
-        />
-      </div>
-      {esConductor ? (
-          <button onClick={() => setMostrarFormViaje(true)}>Publicar Viaje</button>
-        ) : (
-          <button onClick={() => setMostrarForm(true)}>Conducir</button>
-        )}
-        {mostrarForm && (
-         <div className="modal-fondo" onClick={() => setMostrarForm(false)}>
-          <div className="modal-caja" onClick={(e) => e.stopPropagation()}></div>
-           <div style={{ border: '1px solid #ccc', padding: '15px', margin: '15px auto', maxWidth: '300px', borderRadius: '8px' }}>
-            <form onSubmit={registrarConductor}>
-              <h3>Descripción del conductor</h3>
+          <input
+            placeholder="Buscar por destino u horario..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            style={{ padding: '8px', width: '260px' }}
+          />
 
-              <label>Nombre completo:</label>
-              <input
-                type="text"
-                value={nombreCompleto}
-                onChange={(e) => setnombreCompleto(e.target.value)}
-                required
-              />
-              
-              <br /><br />
-
-              <label>Correo:</label>
-              <input
-                type="text"
-                value={Correo}
-                onChange={(e) => setCorreo(e.target.value)}
-                required
-              />
-
-              <br /><br />
-
-              <label>Teléfono:</label>
-              <input
-                type="text"
-                value={telefono}
-                onChange={(e) => setTelefono(e.target.value)}
-                required
-              />
-
-              <br /><br />
-
-              <label>Patente:</label>
-              <input
-                type="text"
-                value={patente}
-                onChange={(e) => setPatente(e.target.value)}
-                required
-              />
-
-              <br /><br />
-
-              <label>Modelo de auto:</label>
-              <input
-                type="text"
-                value={modeloAuto}
-                onChange={(e) => setModeloAuto(e.target.value)}
-                required
-              />
-
-              <br /><br />
-
-              <button type="submit">Empezar</button>
-              <button
-                type="button"
-                onClick={() => setMostrarForm(false)}
-                style={{ marginLeft: '10px' }}
-              >
-                Cancelar
-              </button>
-            </form>
-          </div>
+          <button
+            type="button"
+            style={{ marginLeft: '10px' }}
+            onClick={() => setMostrarFormViaje(true)}
+          >
+            + Publicar Viaje
+          </button>
         </div>
+
+        {esConductor ? (
+          <button type="button" onClick={() => setMostrarForm(true)}>
+            Completar perfil de conductor
+          </button>
+        ) : null}
+
+        {mostrarForm && (
+          <div className="modal-fondo" onClick={() => setMostrarForm(false)}>
+            <div className="modal-caja" onClick={(e) => e.stopPropagation()}>
+              <form onSubmit={registrarConductor}>
+                <h3>Descripción del conductor</h3>
+
+                <label>Nombre completo:</label>
+                <input
+                  type="text"
+                  value={nombreCompleto}
+                  onChange={(e) => setnombreCompleto(e.target.value)}
+                  required
+                />
+
+                <br /><br />
+
+                <label>Correo:</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+
+                <br /><br />
+
+                <label>Teléfono:</label>
+                <input
+                  type="text"
+                  value={telefono}
+                  onChange={(e) => setTelefono(e.target.value)}
+                  required
+                />
+
+                <br /><br />
+
+                <label>Patente:</label>
+                <input
+                  type="text"
+                  value={patente}
+                  onChange={(e) => setPatente(e.target.value)}
+                  required
+                />
+
+                <br /><br />
+
+                <label>Modelo de auto:</label>
+                <input
+                  type="text"
+                  value={modeloAuto}
+                  onChange={(e) => setModeloAuto(e.target.value)}
+                  required
+                />
+
+                <br /><br />
+
+                <button type="submit">Empezar</button>
+                <button
+                  type="button"
+                  style={{ marginLeft: '10px' }}
+                  onClick={() => setMostrarForm(false)}
+                >
+                  Cancelar
+                </button>
+              </form>
+            </div>
+          </div>
         )}
 
-        <br /><br />
-
-        <hr />
-
-        {esConductor && mostrarFormViaje && (
+        {mostrarFormViaje && (
           <div className="modal-fondo" onClick={() => setMostrarFormViaje(false)}>
             <div className="modal-caja" onClick={(e) => e.stopPropagation()}>
               <form onSubmit={publicarViaje}>
@@ -315,32 +321,30 @@ export default function App() {
           </div>
         )}
 
-       <h3>Viajes disponibles</h3>
-      {viajes
-        .filter(
-          (v) =>
-            (v.destino || '').toLowerCase().includes(busqueda.toLowerCase()) ||
-            (v.horario || '').includes(busqueda)
-        )
-        .map((v) => (
-        <div key={v.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px auto', maxWidth: '300px' }}>
-          <p><strong>ORT → {v.destino}</strong> ({v.horario})</p>
-          <p>Conductor: {v.conductor_nombre} | Patente: {v.patente}</p>
-          <p>Asientos libres: {v.asientos_disponibles}</p>
-          {v.asientos_disponibles > 0 && (
-            <button onClick={() => reservarViaje(v)}>Sumarme al viaje</button>
-            
-            
-          )}
-        </div>
-      ))}
-    
-        <button 
-          onClick={async () => { 
-            await supabase.auth.signOut(); 
-            setSession(null); 
+        <h3>Viajes disponibles</h3>
+        {viajes
+          .filter(
+            (v) =>
+              (v.destino || '').toLowerCase().includes(busqueda.toLowerCase()) ||
+              (v.horario || '').includes(busqueda)
+          )
+          .map((v) => (
+            <div key={v.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px auto', maxWidth: '300px' }}>
+              <p><strong>ORT → {v.destino}</strong> ({v.horario})</p>
+              <p>Conductor: {v.conductor_nombre} | Patente: {v.patente}</p>
+              <p>Asientos libres: {v.asientos_disponibles}</p>
+              {v.asientos_disponibles > 0 && (
+                <button type="button" onClick={() => reservarViaje(v)}>Sumarme al viaje</button>
+              )}
+            </div>
+          ))}
+
+        <button
+          type="button"
+          onClick={async () => {
+            await supabase.auth.signOut();
+            setSession(null);
             setEsRegistro(false);
-            setMostrarForm(false);
           }}
           style={{ backgroundColor: '#dc3545', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer' }}
         >

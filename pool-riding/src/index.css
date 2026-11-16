@@ -1,140 +1,744 @@
+/* =========================================================
+   RESET GENERAL Y TIPOGRAFÍA
+   ========================================================= */
 * {
   box-sizing: border-box;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 body {
   margin: 0;
-  background-color: #f4f6f9;
-  color: #1e293b;
+  background-color: #f1f5f9;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #0f172a;
 }
 
-/* Contenedor principal */
-#root > div {
-  padding: 0 0 50px 0 !important;
+/* =========================================================
+   CONTENEDOR CON SESIÓN Y HEADER AZUL
+   ========================================================= */
+#root > div:has(input[placeholder*="Buscar"]) {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0b4a7d 0%, #135d96 220px, #f1f5f9 220px, #f1f5f9 100%);
+  padding: 28px 32px 60px 32px !important;
   text-align: center;
 }
 
-/* Encabezado azul tipo banner */
-h1 {
-  background-color: #0b4a99;
-  color: #ffffff;
-  font-size: 1.9rem;
-  font-weight: 700;
-  margin: 0 0 24px 0;
-  padding: 32px 40px;
-  text-align: left;
+/* Título "¡Bienvenido a Pool-Riding, ...!" */
+#root > div:has(input[placeholder*="Buscar"]) > h1,
+#root > div:has(input[placeholder*="Buscar"]) > h2:first-of-type {
+  color: #ffffff !important;
+  font-size: 32px;
+  font-weight: 800;
+  margin: 10px 0 24px 0;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
-h3 {
-  color: #0b4a99;
-  font-size: 1.3rem;
-  max-width: 1120px;
-  margin: 28px auto 12px auto;
-  padding: 0 20px;
-  text-align: left;
+/* Barra que envuelve el buscador y el botón "+ Publicar Viaje" */
+#root > div:has(input[placeholder*="Buscar"]) > div:has(input[placeholder*="Buscar"]) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.16);
+  padding: 10px 14px;
+  border-radius: 16px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
 }
 
-/* Buscador e inputs */
-input {
-  padding: 11px 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+#root > div:has(input[placeholder*="Buscar"]) input[placeholder*="Buscar"] {
+  width: 340px !important;
+  max-width: 100%;
+  padding: 12px 16px !important;
+  border-radius: 10px !important;
+  border: none !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
   font-size: 14px;
-  background-color: #ffffff;
-  color: #0f172a;
   outline: none;
-  min-width: 240px;
-  margin: 4px;
 }
 
-input:focus {
-  border-color: #0b4a99;
-  box-shadow: 0 0 0 3px rgba(11, 74, 153, 0.15);
-}
-
-/* Botones principales azul marino */
-button {
-  background-color: #06357a;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  padding: 11px 20px;
-  font-size: 14px;
-  font-weight: 600;
+#root > div:has(input[placeholder*="Buscar"]) > div:has(input[placeholder*="Buscar"]) button {
+  background: #ffffff !important;
+  color: #0b4a7d !important;
+  border: none !important;
+  padding: 12px 20px !important;
+  border-radius: 10px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
   cursor: pointer;
-  margin: 4px;
-  transition: background-color 0.2s;
+  margin: 0 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
-button:hover {
-  background-color: #042556;
+#root > div:has(input[placeholder*="Buscar"]) > div:has(input[placeholder*="Buscar"]) button:hover {
+  background: #e0f2fe !important;
 }
 
-button[type="button"] {
-  background-color: #e2e8f0;
-  color: #334155;
-}
-
-button[type="button"]:hover {
-  background-color: #cbd5e1;
-}
-
-hr {
-  border: none;
-  border-top: 1px solid #e2e8f0;
-  max-width: 1120px;
-  margin: 24px auto;
-}
-
-/* Tarjetitas de viajes en columnas a lo ancho */
-div > div[style*="border"] {
-  display: inline-block;
-  vertical-align: top;
-  width: 340px;
-  max-width: 92% !important;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 12px !important;
-  padding: 20px !important;
-  margin: 12px !important;
+/* Título "Viajes disponibles" */
+#root > div:has(input[placeholder*="Buscar"]) h3:not(.modal-caja h3) {
+  max-width: 1280px;
+  margin: 0 auto 24px auto;
   text-align: left;
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+  font-size: 22px;
+  font-weight: 800;
+  color: #0b4a7d !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
-div > div[style*="border"] p {
-  margin: 8px 0;
-  font-size: 14px;
-  color: #334155;
+/* =========================================================
+   GRILLA DE 4 TARJETAS LADO A LADO
+   ========================================================= */
+#root > div:has(input[placeholder*="Buscar"]) > div:has(> div[style*="border"]) {
+  max-width: 1280px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 20px !important;
+  align-items: stretch !important;
 }
 
-/* Botón Sumarme al viaje ancho abajo de cada tarjeta */
-div > div[style*="border"] button {
-  width: 100%;
-  margin: 12px 0 0 0;
-  padding: 11px;
+@media (max-width: 1150px) {
+  #root > div:has(input[placeholder*="Buscar"]) > div:has(> div[style*="border"]) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
 }
+
+@media (max-width: 640px) {
+  #root > div:has(input[placeholder*="Buscar"]) > div:has(> div[style*="border"]) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* =========================================================
+   DISEÑO DE CADA TARJETA DE VIAJE
+   ========================================================= */
+div[style*="border"]:not(.modal-caja) {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-top: 4px solid #135d96 !important;
+  border-radius: 16px !important;
+  padding: 20px !important;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: stretch !important;
+  gap: 12px !important;
+  text-align: left !important;
+  color: #0f172a !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+div[style*="border"]:not(.modal-caja):hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12) !important;
+}
+
+/* Todos los textos internos en gris oscuro legible */
+div[style*="border"]:not(.modal-caja) p,
+div[style*="border"]:not(.modal-caja) span,
+div[style*="border"]:not(.modal-caja) div,
+div[style*="border"]:not(.modal-caja) strong {
+  color: #1e293b !important;
+  margin: 2px 0 !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  word-break: break-word;
+}
+
+/* Encabezado de ruta dentro de la tarjeta */
+div[style*="border"]:not(.modal-caja) > div:first-child strong,
+div[style*="border"]:not(.modal-caja) > strong:first-child {
+  font-size: 17px !important;
+  color: #0b4a7d !important;
+  display: block;
+  margin-bottom: 4px !important;
+}
+
+/* Botón "Sumarme al viaje" azul, ancho completo y abajo */
+div[style*="border"]:not(.modal-caja) button {
+  width: 100% !important;
+  margin-top: auto !important;
+  background-color: #135d96 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 11px 14px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  position: static !important;
+  transition: background-color 0.2s ease;
+}
+
+div[style*="border"]:not(.modal-caja) button:hover {
+  background-color: #0b4a7d !important;
+}
+
+/* Botón "Cerrar Sesión" abajo */
+#root > div:has(input[placeholder*="Buscar"]) > button {
+  margin-top: 40px !important;
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 11px 24px !important;
+  border-radius: 10px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+/* =========================================================
+   MODAL PUBLICAR VIAJE
+   ========================================================= */
 .modal-fondo {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(5px);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
+  padding: 16px;
 }
 
 .modal-caja {
-  background-color: #ffffff;
-  width: 90%;
-  max-width: 440px;
-  padding: 28px;
-  border-radius: 16px;
+  background: #ffffff !important;
+  width: 100%;
+  max-width: 460px;
+  max-height: 92vh;
+  overflow-y: auto;
+  border-radius: 20px;
+  padding: 22px 26px;
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.35);
   text-align: left;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  color: #0f172a !important;
+}
+
+.modal-caja h3 {
+  margin: 0 0 12px 0;
+  color: #0b4a7d !important;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.modal-caja label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e293b !important;
+  margin: 9px 0 4px 0;
+}
+
+.modal-caja input {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  font-size: 14px;
+  color: #0f172a !important;
+}
+
+.modal-acciones {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.modal-caja button[type="submit"],
+.modal-acciones button[type="submit"] {
+  width: 100%;
+  flex: 1;
+  margin-top: 16px;
+  background-color: #135d96 !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 12px 18px !important;
+  border-radius: 10px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.modal-caja button[type="button"],
+.modal-acciones button[type="button"] {
+  margin-top: 10px;
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  border: none !important;
+  padding: 11px 16px !important;
+  border-radius: 10px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.modal-acciones button[type="submit"],
+.modal-acciones button[type="button"] {
+  margin-top: 0;
+}
+
+/* =========================================================
+   LOGIN / REGISTRO (SIN SESIÓN)
+   ========================================================= */
+#root > div:not(:has(input[placeholder*="Buscar"])) {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(180deg, #0b4a7d 0%, #135d96 290px, #f1f5f9 290px, #f1f5f9 100%);
+  padding: 44px 20px 60px 20px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#root > div:not(:has(input[placeholder*="Buscar"])) > h1 {
+  color: #ffffff !important;
+  font-size: 34px;
+  font-weight: 800;
+  margin: 0 0 28px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+#root > div:not(:has(input[placeholder*="Buscar"])) > h1::before {
+  content: '📍';
+  width: 72px;
+  height: 72px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+#root > div:not(:has(input[placeholder*="Buscar"])) > div {
+  background: rgba(255, 255, 255, 0.16);
+  padding: 5px;
+  border-radius: 14px;
+  margin-bottom: 24px !important;
+  display: inline-flex;
+  gap: 6px;
+}
+
+#root > div:not(:has(input[placeholder*="Buscar"])) > div button {
+  background: transparent;
+  color: #ffffff !important;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 0 !important;
+}
+
+#root > div:not(:has(input[placeholder*="Buscar"])) > div button:hover {
+  background-color: #ffffff;
+  color: #135d96 !important;
+}
+
+#root > div:not(:has(input[placeholder*="Buscar"])) > h3 {
+  width: 100%;
+  max-width: 440px;
+  background-color: #ffffff;
+  color: #135d96 !important;
+  margin: 0;
+  padding: 34px 36px 12px 36px;
+  border-radius: 22px 22px 0 0;
+  text-align: left;
+  font-size: 24px;
+  font-weight: 700;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
+#root > div:not(:has(input[placeholder*="Buscar"])) > form {
+  width: 100%;
+  max-width: 440px;
+  background-color: #ffffff;
+  padding: 8px 36px 38px 36px;
+  border-radius: 0 0 22px 22px;
+  text-align: left;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
+}
+
+#root > div:not(:has(input[placeholder*="Buscar"])) > form br {
+  display: none;
+}
+
+#root > div:not(:has(input[placeholder*="Buscar"])) > form label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155 !important;
+  margin: 16px 0 6px 0;
+}
+
+#root > div:not(:has(input[placeholder*="Buscar"])) > form input {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  background-color: #f8fafc;
+  font-size: 15px;
+  color: #0f172a !important;
+  outline: none;
+}
+
+#root > div:not(:has(input[placeholder*="Buscar"])) > form button[type="submit"] {
+  margin-top: 26px;
+  width: 100%;
+  background-color: #135d96 !important;
+  color: #ffffff !important;
+  border: none;
+  border-radius: 12px;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+/* =========================================================
+   GRILLA ESTRICTA DE 4 TARJETAS POR RENGLÓN
+   ========================================================= */
+
+/* Apunta tanto a .grid-viajes como a cualquier contenedor directo de tarjetas */
+.grid-viajes,
+#root div:has(> div[style*="border"]:not(.modal-caja)),
+#root div:has(> .tarjeta-viaje) {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 20px !important;
+  width: 100% !important;
+  max-width: 1320px !important;
+  margin: 0 auto !important;
+  align-items: stretch !important;
+}
+
+/* Responsivo: 2 por renglón en tablet/pantalla mediana */
+@media (max-width: 1100px) {
+  .grid-viajes,
+  #root div:has(> div[style*="border"]:not(.modal-caja)),
+  #root div:has(> .tarjeta-viaje) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Responsivo: 1 por renglón en celular */
+@media (max-width: 640px) {
+  .grid-viajes,
+  #root div:has(> div[style*="border"]:not(.modal-caja)),
+  #root div:has(> .tarjeta-viaje) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Asegura que cada tarjeta ocupe su celda completa y no se encoja ni se estire */
+.tarjeta-viaje,
+div[style*="border"]:not(.modal-caja) {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+
+/* =========================================================
+   SEPARAR EL HEADER AZUL DE LA GRILLA DE 4 TARJETAS
+   ========================================================= */
+
+/* El contenedor principal ocupa todo el ancho y ordena en bloque */
+#root > div:has(input[placeholder*="Buscar"]) {
+  display: block !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 0 0 60px 0 !important;
+  background: #f1f5f9 !important;
+}
+
+/* Banda azul superior limpia de punta a punta */
+#root > div:has(input[placeholder*="Buscar"]) > h1,
+#root > div:has(input[placeholder*="Buscar"]) > h2:first-of-type {
+  background: linear-gradient(180deg, #0b4a7d 0%, #135d96 100%) !important;
+  margin: 0 !important;
+  padding: 36px 24px 96px 24px !important;
+  text-align: center !important;
+  color: #ffffff !important;
+  font-size: 32px !important;
+}
+
+/* Buscador y botón "+ Publicar Viaje" centrados dentro del banner azul */
+#root > div:has(input[placeholder*="Buscar"]) > div:has(input[placeholder*="Buscar"]) {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 12px !important;
+  max-width: 580px !important;
+  margin: -74px auto 44px auto !important;
+  padding: 10px 14px !important;
+  background: rgba(255, 255, 255, 0.16) !important;
+  border-radius: 16px !important;
+  position: relative;
+  z-index: 2;
+}
+
+/* Título "Viajes disponibles" en su propio renglón arriba de las 4 tarjetas */
+#root > div:has(input[placeholder*="Buscar"]) > h3 {
+  display: block !important;
+  max-width: 1320px !important;
+  margin: 28px auto 20px auto !important;
+  padding: 0 32px !important;
+  text-align: left !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: #0b4a7d !important;
+}
+
+/* Si las tarjetas están sueltas directo adentro del contenedor principal,
+   las envolvemos visualmente en un grid sin arrastrar al header */
+#root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 20px !important;
+  padding: 0 32px 60px 32px !important;
+  background: linear-gradient(180deg, #0b4a7d 0%, #135d96 210px, #f1f5f9 210px, #f1f5f9 100%) !important;
+}
+
+#root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) > h1,
+#root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) > h2:first-of-type {
+  grid-column: 1 / -1 !important;
+  background: transparent !important;
+  padding: 28px 0 8px 0 !important;
+}
+
+#root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) > div:has(input[placeholder*="Buscar"]) {
+  grid-column: 1 / -1 !important;
+  margin: 0 auto 24px auto !important;
+}
+
+#root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) > h3 {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  margin: 12px 0 4px 0 !important;
+  padding: 0 !important;
+}
+
+#root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) > button {
+  grid-column: 1 / -1 !important;
+  justify-self: center !important;
+  margin-top: 24px !important;
+}
+
+@media (max-width: 1100px) {
+  #root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) {
+    grid-template-columns: 1fr !important;
+  }
+}
+/* =========================================================
+   PULIDO FINAL DE UI: BANNER FULL-WIDTH Y TARJETAS PRO
+   ========================================================= */
+
+/* Asegura que #root ocupe el 100% real de la pantalla sin márgenes blancos */
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: #f1f5f9;
+}
+
+/* Contenedor principal con banner azul de punta a punta */
+#root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 22px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 max(32px, calc((100vw - 1280px) / 2)) 64px max(32px, calc((100vw - 1280px) / 2)) !important;
+  background: linear-gradient(180deg, #0b4a7d 0%, #135d96 225px, #f1f5f9 225px, #f1f5f9 100%) !important;
+  box-sizing: border-box !important;
+}
+
+/* Título principal centrado y más nítido */
+#root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) > h1,
+#root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) > h2:first-of-type {
+  grid-column: 1 / -1 !important;
+  margin: 34px 0 6px 0 !important;
+  padding: 0 !important;
+  font-size: 34px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.5px !important;
+  color: #ffffff !important;
+  text-align: center !important;
+  background: transparent !important;
+}
+
+/* Barra del buscador + botón "+ Publicar Viaje" */
+#root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) > div:has(input[placeholder*="Buscar"]) {
+  grid-column: 1 / -1 !important;
+  justify-self: center !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: rgba(255, 255, 255, 0.16) !important;
+  backdrop-filter: blur(8px);
+  padding: 10px 14px !important;
+  border-radius: 16px !important;
+  margin: 0 0 36px 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+#root > div:has(input[placeholder*="Buscar"]) input[placeholder*="Buscar"] {
+  width: 350px !important;
+  padding: 12px 16px !important;
+  border-radius: 11px !important;
+  border: none !important;
+  font-size: 14px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+#root > div:has(input[placeholder*="Buscar"]) > div:has(input[placeholder*="Buscar"]) button {
+  padding: 12px 22px !important;
+  border-radius: 11px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  transition: transform 0.15s ease, background-color 0.2s ease !important;
+}
+
+#root > div:has(input[placeholder*="Buscar"]) > div:has(input[placeholder*="Buscar"]) button:hover {
+  transform: translateY(-1px);
+  background-color: #e0f2fe !important;
+}
+
+/* Subtítulo "Viajes disponibles" */
+#root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) > h3 {
+  grid-column: 1 / -1 !important;
+  margin: 14px 0 2px 0 !important;
+  padding: 0 !important;
+  font-size: 23px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  text-align: left !important;
+}
+
+/* =========================================================
+   TARJETAS DE VIAJE REDISEÑADAS
+   ========================================================= */
+div[style*="border"]:not(.modal-caja) {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-top: 4px solid #135d96 !important;
+  border-radius: 18px !important;
+  padding: 22px !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  min-height: 225px !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+div[style*="border"]:not(.modal-caja):hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 14px 28px rgba(11, 74, 125, 0.12) !important;
+  border-color: #bae6fd !important;
+}
+
+/* Primera línea de la tarjeta (Destino y Horario) destacada como título */
+div[style*="border"]:not(.modal-caja) > div:first-child,
+div[style*="border"]:not(.modal-caja) > p:first-child {
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  color: #0b4a7d !important;
+  padding-bottom: 10px !important;
+  margin-bottom: 4px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+div[style*="border"]:not(.modal-caja) > div:first-child strong,
+div[style*="border"]:not(.modal-caja) > p:first-child strong {
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  color: #0b4a7d !important;
+}
+
+/* Datos secundarios (Conductor y Patente) */
+div[style*="border"]:not(.modal-caja) > div:nth-child(2),
+div[style*="border"]:not(.modal-caja) > p:nth-child(2) {
+  font-size: 13.5px !important;
+  color: #475569 !important;
+  line-height: 1.5 !important;
+}
+
+/* Indicador de Asientos libres tipo etiqueta */
+div[style*="border"]:not(.modal-caja) > div:nth-child(3),
+div[style*="border"]:not(.modal-caja) > p:nth-child(3) {
+  display: inline-block !important;
+  align-self: flex-start !important;
+  background-color: #f0fdf4 !important;
+  color: #15803d !important;
+  border: 1px solid #bbf7d0 !important;
+  padding: 4px 11px !important;
+  border-radius: 999px !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  margin-top: 4px !important;
+}
+
+/* Botón "Sumarme al viaje" anclado siempre abajo */
+div[style*="border"]:not(.modal-caja) button {
+  margin-top: auto !important;
+  width: 100% !important;
+  background: linear-gradient(135deg, #135d96 0%, #0b4a7d 100%) !important;
+  color: #ffffff !important;
+  padding: 12px 16px !important;
+  border-radius: 12px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2px !important;
+  box-shadow: 0 4px 10px rgba(19, 93, 150, 0.2) !important;
+  transition: opacity 0.2s ease, transform 0.15s ease !important;
+}
+
+div[style*="border"]:not(.modal-caja) button:hover {
+  opacity: 0.94 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Responsivo */
+@media (max-width: 1120px) {
+  #root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #root > div:has(input[placeholder*="Buscar"]):has(> div[style*="border"]) {
+    grid-template-columns: 1fr !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
 }
