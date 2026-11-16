@@ -107,8 +107,26 @@ export default function App() {
 
   // FORM CONDUCTOR
   const cargarViajes = async () => {
-    const { data } = await supabase.from('viajes').select('*');
-    if (data) setViajes(data);
+    const { data: listaViajes, error: errorViajes } = await supabase
+      .from('viajes')
+      .select('*');
+
+    const { data: listaDetalles, error: errorDetalles } = await supabase
+      .from('Viaje_detalle')
+      .select('*');
+
+    if (!errorViajes && !errorDetalles) {
+      const viajesCalculados = listaViajes.map((v) => {
+        const ocupados = listaDetalles.filter((d) => d.id_viaje === v.id).length;
+        const totales = v.asientos_totales || 4;
+        return {
+          ...v,
+          asientos_totales: totales,
+          asientos_disponibles: totales - ocupados,
+        };
+      });
+      setViajes(viajesCalculados);
+    }
   };
 
   const registrarConductor = async (e) => {
@@ -161,18 +179,21 @@ export default function App() {
 
   const reservarViaje = async (viaje) => {
     const { error } = await supabase
-      .from('viajes')
-      .update({ asientos_disponibles: viaje.asientos_disponibles - 1 })
-      .eq('id', viaje.id);
+      if (viaje.asientos_disponibles <= 0) return;
+
+    const { error } = await supabase
+      .from('Viaje_detalle')
+      .insert([{ mail_usuario: session.user.email, id_viaje: viaje.id }]);
+
+    if (!error) {
+      cargarViajes();
+    }
+      
 
     if (!error) {
       alert('¡Te sumaste al viaje!');
-if (!error) {
-      await supabase
-        .from('Viaje_detalle')
-        .insert([{ mail_usuario: session.user.email, id_viaje: viaje.id }]);
 
-      cargarViajes();
+   
     }
       cargarViajes();
     }
