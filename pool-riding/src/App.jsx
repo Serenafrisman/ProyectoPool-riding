@@ -19,17 +19,17 @@ export default function App() {
   const [asientos, setAsientos] = useState(3);
   const [viajes, setViajes] = useState([]);
   const [busqueda, setBusqueda] = useState('');
+  const [nombreUsuario, setNombreUsuario] = useState('');
+  const [fecha, setFecha] = useState('');
+  
 
   const [esConductor, setEsConductor] = useState(localStorage.getItem('soyConductor') === 'true');
 
   // Estado para controlar la visibilidad del formulario de conductor
   const [mostrarForm, setMostrarForm] = useState(false);
   const [nombreCompleto, setnombreCompleto] = useState('');
-  const [Correo, setCorreo] = useState('');
-  const [emailPersonal, setEmailPersonal] = useState('');
-  const [parienteDe, setParienteDe] = useState('');
-  const [colorAuto, setColorAuto] = useState('');
-  const [aceptaTerminos, setAceptaTerminos] = useState(false);
+
+
 
   //  INICIAR SESIÓN
   const ingresar = async (e) => {
@@ -85,8 +85,14 @@ export default function App() {
       return;
     }
 
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) return setMensaje('Error: ' + error.message);
+  const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { nombre, apellido },
+      },
+    });
+    
 
     const { error: errorTabla } = await supabase
       .from('perfiles')
@@ -137,6 +143,7 @@ export default function App() {
         conductor_nombre: session.user.email,
         patente: patente,
         destino: destino,
+        fecha: fecha,
         horario: horario,
         asientos_disponibles: Number(asientos)
       }]);
@@ -160,6 +167,13 @@ export default function App() {
 
     if (!error) {
       alert('¡Te sumaste al viaje!');
+if (!error) {
+      await supabase
+        .from('Viaje_detalle')
+        .insert([{ mail_usuario: session.user.email, id_viaje: viaje.id }]);
+
+      cargarViajes();
+    }
       cargarViajes();
     }
   };
@@ -167,7 +181,8 @@ export default function App() {
   if (session) {
     return (
       <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
-        <h1>¡Bienvenido a Pool-Riding! </h1>
+       <h1>
+  ¡Bienvenido a Pool-Riding, {session.user.user_metadata?.nombre || session.user.email.split('@')[0]}!</h1>
         <div style={{ marginBottom: '12px' }}>
         <input
           placeholder="Buscar por destino u horario..."
@@ -256,10 +271,16 @@ export default function App() {
         {esConductor && mostrarFormViaje && (
           <form onSubmit={publicarViaje}>
             <h3>Publicar Viaje (Desde ORT)</h3>
+            <label>Destino</label>
             <input placeholder="Destino" value={destino} onChange={(e) => setDestino(e.target.value)} required />
             <br /><br />
-            <input placeholder="Horario" value={horario} onChange={(e) => setHorario(e.target.value)} required />
+            <label>Fecha</label>
+              <input placeholder="Fecha"  type="date" value={fecha}  onChange={(e) => setFecha(e.target.value)} required />
             <br /><br />
+            <label>Horario</label>
+            <input placeholder="Horario" type="time" value={horario} onChange={(e) => setHorario(e.target.value)} required />
+            <br /><br />
+            <label>Asientos disponibles</label>
             <input type="number" min="1" max="3" value={asientos} onChange={(e) => setAsientos(e.target.value)} required />
             <br /><br />
             <button type="submit">Subir</button>
@@ -309,6 +330,7 @@ export default function App() {
       <form onSubmit={esRegistro ? registrar : ingresar}>
         {esRegistro && (
           <>
+          <label>Nombre</label>
             <input 
               placeholder="Nombre" 
               value={nombre} 
@@ -316,6 +338,7 @@ export default function App() {
               required 
             />
             <br /><br />
+            <label>Apellido</label>
             <input 
               placeholder="Apellido" 
               value={apellido} 
@@ -325,7 +348,7 @@ export default function App() {
             <br /><br />
           </>
         )}
-
+        <label>Email</label>
         <input 
           type="email" 
           placeholder="Correo (@est.ort.edu.ar)" 
@@ -334,7 +357,7 @@ export default function App() {
           required 
         />
         <br /><br />
-
+        <label>Contraseña</label>
         <input 
           type="password" 
           placeholder="Contraseña" 
